@@ -1184,7 +1184,15 @@
       // ── JSON tab ───────────────────────────────────────────────────────
       '<div id="qfg-tab-json" style="display:none">' +
       '<pre id="qfg-json-panel" style="background:#0f172a;color:#a5f3fc;padding:20px;border-radius:10px;overflow-x:auto;font-size:0.78rem;line-height:1.6;white-space:pre-wrap;word-break:break-word;"></pre>' +
-      "</div>" +
+      "</div>";
+
+    let modalsContainer = document.getElementById("qfg-modals-container");
+    if (!modalsContainer) {
+      modalsContainer = document.createElement("div");
+      modalsContainer.id = "qfg-modals-container";
+      document.body.appendChild(modalsContainer);
+    }
+    modalsContainer.innerHTML =
       editCaseModalHTML(mOpts) +
       editSuiteModalHTML() +
       editPlanModalHTML();
