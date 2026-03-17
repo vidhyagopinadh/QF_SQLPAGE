@@ -282,8 +282,8 @@ SELECT 'html' AS component, '
   /* ============================================
      MODALS
      ============================================ */
-  .qfg-modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.45); z-index: 9999; display: flex; align-items: center; justify-content: center; }
-  .qfg-modal { background: #ffffff; border-radius: 14px; padding: 24px 28px; width: min(580px, 95vw); box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2); }
+  .qfg-modal-overlay {position: fixed;inset: 0;background: rgba(0, 0, 0, 0.45);z-index: 9999;display: flex;align-items: flex-start;justify-content: center;overflow-y: auto;padding: 40px 20px;}
+  .qfg-modal {background: #ffffff;border-radius: 14px;padding: 24px 28px;width: min(580px, 95vw);max-height: 90vh;overflow-y: auto;box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);}
   .qfg-modal-header { display: flex; justify-content: space-between; align-items: center; font-weight: 800; font-size: 1.05rem; color: var(--text-primary); margin-bottom: 16px; }
   .qfg-modal-close { background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--slate-500); transition: all 0.2s ease; }
   .qfg-modal-close:hover { color: var(--danger); }
@@ -302,6 +302,15 @@ SELECT 'html' AS component, '
   .qfg-toggle-header.open { background: #ffffff; border-color: var(--slate-300); }
   .qfg-collapse-content { max-height: 0; opacity: 0; overflow: hidden; transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, margin 0.3s ease; pointer-events: none; padding: 0; }
   .qfg-collapse-content.open { max-height: 500px; opacity: 1; margin-bottom: 12px; pointer-events: auto; padding-top: 12px; }
+
+@media (max-width: 480px) {
+  .qfg-modal {
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+    max-height: 100vh;
+  }
+}
 </style>
 
 <div class="qfg-wrap">
