@@ -136,7 +136,7 @@ SELECT 'html' AS component, '
   /* ============================================
      SCHEMA BANNER
      ============================================ */
-  #qfg-schema-banner { display: none; background: linear-gradient(135deg, #d3f7f9 0%, #e0f2fe 100%); border: 1.5px solid #93c5fd; border-radius: 10px; padding: 12px 16px; margin-bottom: 18px; font-size: 0.875rem; font-weight: 600; color: #1d8397; align-items: center; gap: 10px; flex-wrap: wrap; }
+  #qfg-schema-banner { display: none; background: linear-gradient(135deg, #d3f7f9 0%, #e0f2fe 100%); border: 1.5px solid #93c5fd; border-radius: 10px; padding: 12px 16px; margin-bottom: 18px; font-size: 0.875rem; font-weight: 600; color: #169fb9; align-items: center; gap: 10px; flex-wrap: wrap; }
   #qfg-schema-banner.show { display: flex; }
 
   /* ============================================
@@ -287,7 +287,7 @@ SELECT 'html' AS component, '
   .qfg-modal-header { display: flex; justify-content: space-between; align-items: center; font-weight: 800; font-size: 1.05rem; color: var(--text-primary); margin-bottom: 16px; }
   .qfg-modal-close { background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--slate-500); transition: all 0.2s ease; }
   .qfg-modal-close:hover { color: var(--danger); }
-  .qfg-modal-hint { font-size: 0.8rem; color: var(--primary-dark); margin-bottom: 16px; background: var(--primary-light); padding: 10px 12px; border-radius: 7px; border-left: 3px solid var(--primary); }
+  .qfg-modal-hint {font-size: 0.8rem;color: #1d8397;margin-bottom: 16px;background: linear-gradient(135deg, #d3f7f9 0%, #e0f2fe 100%);padding: 10px 12px;border-radius: 7px;border-left: 3px solid #1ebbba; }
   .qfg-modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
   .qfg-modal-footer { display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border); }
 
@@ -404,7 +404,7 @@ SELECT 'html' AS component, '
             <div style="position:relative;display:flex;align-items:center;">
               <input type="text" id="qfg-cycle-date-display" placeholder="MM-DD-YYYY"
                 style="width:100%;cursor:pointer;padding-right:28px;" />
-              <input type="hidden" id="qfg-cycle-date" />
+              <input type="hidden" id="qfg-cycle-date"  placeholder="MM-DD-YYYY"/>
               <i class="fas fa-calendar-alt" style="position:absolute;right:8px;pointer-events:none;color:#94a3b8;font-size:.85rem;"></i>
             </div>
           </div>
@@ -417,7 +417,7 @@ SELECT 'html' AS component, '
         <button class="qfg-btn-reset" id="qfg-reset-btn">Reset</button>
         <button class="qfg-btn-generate" id="qfg-gen-btn">
           <span id="qfg-btn-icon">&#10024;</span>
-          <span id="qfg-btn-text">Create Test Cases with AI</span>
+          <span id="qfg-btn-text">Create Test Cases</span>
         </button>
       </div>
 

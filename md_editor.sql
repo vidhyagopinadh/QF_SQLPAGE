@@ -23,8 +23,10 @@ SELECT 'shell' AS component,
         json_array(
             '/css/theme.css?v=' || CAST(STRFTIME('%s', 'now') AS TEXT),
             '/css/chat.css?v='  || CAST(STRFTIME('%s', 'now') AS TEXT),
-            '/css/pikaday.css'
+            '/css/pikaday.css',
+            'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'
         ) AS css;
+        
 
 SET _members   = (SELECT json_group_array(json_object('name', full_name, 'id', id)) FROM team_members);
 SET _scenarios = (SELECT json_group_array(name) FROM scenario_types);
@@ -47,80 +49,103 @@ SELECT 'html' AS component, '
             display: flex;
             min-height: calc(100vh - 140px);
             width: 100%;
+            gap: 1.2rem;
+            padding: 1.2rem;
+            background: linear-gradient(135deg, rgba(248, 250, 252, 0.5) 0%, rgba(241, 245, 249, 0.3) 100%);
         }
 
         /* Top Dock Toolbar Styles */
         .action-dock-container {
             width: 100%;
             display: none; /* Toggled by JS */
-            padding: 0.5rem 1rem;
-            background: rgba(248, 250, 252, 0.9);
-            border-bottom: 1px solid var(--border-color);
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, rgba(248, 250, 252, 0.95) 0%, rgba(241, 245, 249, 0.9) 100%);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.6);
             z-index: 50;
             position: sticky;
             top: 0;
-            justify-content: flex-end; /* Align right */
-            padding-right: 2rem;       /* Add some spacing from the edge */
+            justify-content: flex-end;
+            padding-right: 2rem;
+            backdrop-filter: blur(8px);
         }
         .action-dock-container.visible {
             display: flex;
-            animation: slideDown 0.3s ease;
+            animation: slideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-10px); }
+            from { opacity: 0; transform: translateY(-12px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         .action-dock {
-            /* Pill style maintained */
-            background: #fff;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 8px 16px; /* Bigger padding */
-            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            background: rgba(255, 255, 255, 0.85);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            border-radius: 10px;
+            padding: 10px 18px;
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
             display: flex;
             align-items: center;
             gap: 1rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.2s ease;
+        }
+        
+        .action-dock:hover {
+            border-color: rgba(226, 232, 240, 1);
+            box-shadow: 0 6px 16px rgba(15, 23, 42, 0.12);
         }
 
         /* Reuse existing dock styles */
         .dock-section { display: flex; align-items: center; }
         .dock-section.gap-2 { gap: 0.5rem; }
-        .dock-section.border-r { border-right: 1px solid #e2e8f0; padding-right: 1rem; margin-right: 0.5rem; }
-        .dock-checkbox { width: 1.1rem; height: 1.1rem; accent-color: var(--primary-color); cursor: pointer; margin-right: 0.5rem; }
-        .dock-label { font-weight: 600; font-size: 0.9rem; color: var(--text-primary); cursor: pointer; white-space: nowrap; }
-        .dock-count { font-size: 0.8rem; color: var(--text-muted); margin-left: 0.5rem; background: #f1f5f9; padding: 0.1rem 0.4rem; border-radius: 999px; white-space: nowrap; }
+        .dock-section.border-r { border-right: 1px solid rgba(226, 232, 240, 0.6); padding-right: 1rem; margin-right: 0.5rem; }
+        .dock-checkbox { width: 1.1rem; height: 1.1rem; accent-color: var(--primary-color); cursor: pointer; margin-right: 0.5rem; border-radius: 5px; transition: all 0.2s; }
+        .dock-checkbox:hover { accent-color: #0284c7; }
+        .dock-label { font-weight: 500; font-size: 0.9rem; color: var(--text-primary); cursor: pointer; white-space: nowrap; letter-spacing: -0.5px; }
+        .dock-count { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); margin-left: 0.5rem; background: linear-gradient(135deg, rgba(241, 245, 249, 0.8) 0%, rgba(226, 232, 240, 0.5) 100%); padding: 0.2rem 0.5rem; border-radius: 6px; white-space: nowrap; border: 1px solid rgba(226, 232, 240, 0.4); }
         
         /* Inputs/Buttons */
         .dock-select, .dock-input, .dock-select-mini, .dock-input-date {
-            height: 36px; font-size: 0.9rem; border: 1px solid #cbd5e1; background: #fff; border-radius: 6px; padding: 0 0.5rem; color: #334155; transition: all 0.2s;
+            height: 36px; font-size: 0.9rem; border: 1px solid rgba(203, 213, 225, 0.6); background: rgba(255, 255, 255, 0.7); border-radius: 8px; padding: 0 0.75rem; color: #334155; transition: all 0.2s ease; font-weight: 500;
         }
-        .dock-btn-icon { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: transparent; border: 1px solid transparent; border-radius: 6px; color: #64748b; cursor: pointer; transition: all 0.2s; }
-        .dock-btn-icon:hover { background: #f1f5f9; color: var(--primary-color); }
+        .dock-select:focus, .dock-input:focus, .dock-select-mini:focus, .dock-input-date:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+        }
+        .dock-btn-icon { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: transparent; border: 1px solid transparent; border-radius: 8px; color: #64748b; cursor: pointer; transition: all 0.2s ease; }
+        .dock-btn-icon:hover { background: rgba(241, 245, 249, 0.8); color: var(--primary-color); border-color: rgba(226, 232, 240, 0.5); transform: translateY(-1px); }
+        .dock-btn-icon:active { transform: translateY(0); }
         
         /* Unified Blue Buttons */
         .dock-btn-primary, .dock-btn-secondary, .dock-btn-run { 
             height: 36px; 
-            padding: 0 1rem; 
-            background: var(--primary-color); 
+            padding: 0 1.1rem; 
+            background: linear-gradient(135deg, var(--primary-color) 0%, #0284c7 100%);
             border: none; 
-            border-radius: 6px; 
+            border-radius: 8px; 
             color: white; 
             font-size: 0.9rem; 
             font-weight: 600; 
             cursor: pointer; 
             display: flex; 
             align-items: center; 
-            gap: 0.4rem; 
-            box-shadow: 0 2px 4px rgba(14, 165, 233, 0.3); 
-            transition: all 0.2s;
+            gap: 0.5rem; 
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.25); 
+            transition: all 0.2s ease;
             margin-left: 0.25rem;
+            letter-spacing: -0.3px;
         }
         .dock-btn-primary:hover, .dock-btn-secondary:hover, .dock-btn-run:hover { 
-            background: #0284c7; 
-            transform: translateY(-1px);
-            box-shadow: 0 4px 6px rgba(14, 165, 233, 0.4);
+            background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(14, 165, 233, 0.35);
+        }
+        .dock-btn-primary:active, .dock-btn-secondary:active, .dock-btn-run:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(14, 165, 233, 0.25);
         }
 
         /* Utility classes */
@@ -145,15 +170,14 @@ SELECT 'html' AS component, '
         .right-rounded { border-top-left-radius: 0; border-bottom-left-radius: 0; }
         
         /* Tree View (Hierarchy) Tab Styles */
-        .tree-node { margin-left: 1.25rem; border-left: 1px solid #e2e8f0; padding-left: 0.75rem; margin-top: 0.25rem; }
+        .tree-node { margin-left: 1.25rem; border-left: 1px solid rgba(226, 232, 240, 0.5); padding-left: 0.75rem; margin-top: 0.3rem; }
         .tree-node.open > .tree-children { display: block; }
-        .tree-header { display: flex; align-items: center; justify-content: space-between; padding: 4px 8px; border-radius: 6px; transition: background 0.2s; }
-        .tree-header:hover { background: #f8fafc; }
-        .tree-actions { display: flex; gap: 0.75rem; opacity: 0.4; transition: opacity 0.2s; }
+        .tree-header { display: flex; align-items: center; justify-content: space-between; padding: 5px 10px; border-radius: 8px; transition: background 0.2s; }
+        .tree-header:hover { background: rgba(241, 245, 249, 0.8); }
+        .tree-actions { display: flex; gap: 0.75rem; opacity: 0.3; transition: opacity 0.2s; }
         .tree-header:hover .tree-actions { opacity: 1; }
-        .tree-actions span:hover { text-decoration: underline; }
+        .tree-actions span:hover { text-decoration: underline; color: var(--primary-color); }
         .tree-children { display: none; }
-        .tree-node.open > .tree-children { display: block; }
 
         /* Upload Prompt */
         .upload-prompt {
@@ -168,42 +192,50 @@ SELECT 'html' AS component, '
         }
 
         .upload-card {
-            background: var(--bg-card);
-            border: 1.5px dashed var(--border-color);
-            border-radius: 16px;
-            padding: 2.5rem 2rem;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%);
+            border: 1.5px dashed rgba(226, 232, 240, 0.8);
+            border-radius: 18px;
+            padding: 2.8rem 2rem;
             text-align: center;
             width: 280px;
-            transition: all 0.2s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             cursor: pointer;
         }
         .upload-card:hover {
             border-color: var(--primary-color);
-            box-shadow: 0 8px 24px rgba(14,165,233,0.12);
-            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(14, 165, 233, 0.15);
+            transform: translateY(-6px);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 1) 0%, rgba(240, 249, 255, 0.95) 100%);
         }
         .upload-card .upload-icon-wrap {
-            width: 80px;
-            height: 80px;
-            border-radius: 20px;
+            width: 90px;
+            height: 90px;
+            border-radius: 24px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 1.25rem auto;
-            font-size: 2.5rem;
+            margin: 0 auto 1.5rem auto;
+            font-size: 2.8rem;
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.08) 0%, rgba(14, 165, 233, 0.04) 100%);
+            transition: all 0.3s ease;
+        }
+        .upload-card:hover .upload-icon-wrap {
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.15) 0%, rgba(14, 165, 233, 0.08) 100%);
+            transform: scale(1.08);
         }
         .upload-card h3 {
-            font-size: 1.1rem;
+            font-size: 1.15rem;
             font-weight: 700;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.6rem;
             color: var(--text-primary);
+            letter-spacing: -0.4px;
         }
         .upload-card p {
             color: var(--text-secondary);
-            font-size: 0.875rem;
-            margin-bottom: 1.5rem;
-            line-height: 1.5;
+            font-size: 0.88rem;
+            margin-bottom: 1.6rem;
+            line-height: 1.6;
         }
         .upload-card-btn {
             width: 100%;
@@ -232,30 +264,31 @@ SELECT 'html' AS component, '
             display: none; /* Hidden strictly until upload */
             width: 100%;
             height: 100%;
-            gap: 1rem;
         }
 
         /* Sidebar Tree */
         .tree-sidebar {
             width: 280px;
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%);
+            border: 1px solid rgba(226, 232, 240, 0.6);
             display: flex;
             flex-direction: column;
             overflow: hidden;
             flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
         }
 
         .tree-sidebar .tree-header {
-            padding: 1rem;
-            border-bottom: 1px solid var(--border-color);
-            font-weight: 600;
+            padding: 1.1rem;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+            font-weight: 700;
             color: var(--text-primary);
-            background: rgba(255,255,255,0.02);
+            background: linear-gradient(135deg, rgba(248, 250, 252, 0.8) 0%, rgba(241, 245, 249, 0.6) 100%);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            font-size: 0.95rem;
+            letter-spacing: -0.3px;
         }
 
         .tree-content {
@@ -280,26 +313,26 @@ SELECT 'html' AS component, '
         .tree-item-label {
             display: flex;
             align-items: center;
-            padding: 6px 8px;
+            padding: 7px 10px;
             cursor: pointer;
-            border-radius: 6px;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
+            border-radius: 8px;
+            color: #169fb9 !important;
+            font-size: 0.75rem;
             transition: all 0.2s ease;
             white-space: nowrap;
-            /* Removed overflow: hidden and text-overflow: ellipsis to show full name */
+            font-weight: 500;
         }
         
         .tree-item-label:hover {
-            background: rgba(14, 165, 233, 0.12);
+            background: rgba(14, 165, 233, 0.08);
             color: var(--primary-color);
-            transform: translateX(2px);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transform: translateX(3px);
         }
         
         .tree-item-label.active {
-            background: rgba(99, 102, 241, 0.15);
+            background: rgba(14, 165, 233, 0.12);
             color: var(--primary-color);
+            font-weight: 600;
         }
         
         .tree-item-label .icon {
@@ -318,7 +351,7 @@ SELECT 'html' AS component, '
             display: none;
             padding-left: 12px;
             margin-left: 6px;
-            border-left: 1px solid var(--border-color);
+            border-left: 2px solid rgba(14, 165, 233, 0.15);
         }
         
         .tree-dir.expanded > .tree-children {
@@ -328,21 +361,23 @@ SELECT 'html' AS component, '
         /* Main Editor/Viewer */
         .editor-main {
             flex: 1;
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.92) 100%);
+            border: 1px solid rgba(226, 232, 240, 0.6);
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
         }
 
         .editor-header {
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid var(--border-color);
+            padding: 0.5rem 1rem;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.5);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(255,255,255,0.02);
+            font-weight: 600;
+            font-size: 0.95rem;
+            letter-spacing: -0.3px;
         }
 
         .editor-content-scroll {
@@ -357,61 +392,98 @@ SELECT 'html' AS component, '
         position: fixed;
         inset: 0;
         z-index: 10000;
-        background: rgba(15, 23, 42, 0.55);
-        backdrop-filter: blur(3px);
+        background: rgba(15, 23, 42, 0.5);
+        backdrop-filter: blur(6px);
         align-items: center;
         justify-content: center;
+        animation: fadeIn 0.2s ease;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
     }
     .modal-overlay.active { 
         display: flex !important; 
     }
     .md-modal {
         background: #ffffff;
-        border-radius: 16px;
+        border-radius: 18px;
         width: 100%;
         max-width: 650px;
         max-height: 90vh;
         display: flex;
         flex-direction: column;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        box-shadow: 0 25px 70px rgba(15, 23, 42, 0.2), 0 0 1px rgba(0, 0, 0, 0.05);
         overflow: hidden;
+        border: 1px solid rgba(226, 232, 240, 0.6);
+        animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
     }
     .modal-header {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 18px 24px;
-        border-bottom: 1px solid #e2e8f0;
-        background: linear-gradient(135deg,#f0f7ff,#f8fafc);
+        padding: 1.5rem 1.75rem;
+        border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+        background: linear-gradient(135deg, rgba(248, 250, 252, 0.9) 0%, rgba(241, 245, 249, 0.8) 100%);
     }
-    .modal-header h3 { margin: 0; font-size: 1rem; font-weight: 700; color: #1e293b; }
-    .close-modal { width: 30px; height: 30px; border: none; border-radius: 8px; background: #f1f5f9; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #64748b; font-size: 1.1rem; }
-    .close-modal:hover { background: #fee2e2; color: #dc2626; }
-    .modal-body { padding: 20px 24px; overflow-y: auto; flex: 1; }
-    .modal-footer { display: flex; justify-content: flex-end; gap: 10px; padding: 14px 24px; border-top: 1px solid #e2e8f0; background: #f8fafc; }
+    .modal-header h3 { margin: 0; font-size: 1.1rem; font-weight: 700; color: #1e293b; letter-spacing: -0.3px; }
+    .close-modal { width: 38px; height: 38px; border: 1px solid rgba(226, 232, 240, 0.5); border-radius: 10px; background: rgba(248, 250, 252, 0.8); cursor: pointer; display: flex; align-items: center; justify-content: center; color: #64748b; font-size: 1.2rem; transition: all 0.2s ease; }
+    .close-modal:hover { background: rgba(226, 232, 240, 0.5); color: var(--primary-color); transform: rotate(90deg); }
+    .modal-body { padding: 1.75rem; overflow-y: auto; flex: 1; }
+    .modal-footer { display: flex; justify-content: flex-end; gap: 10px; padding: 1.25rem 1.75rem; border-top: 1px solid rgba(226, 232, 240, 0.5); background: linear-gradient(135deg, rgba(248, 250, 252, 0.6) 0%, rgba(241, 245, 249, 0.4) 100%); }
     
     .form-group { margin-bottom: 14px; }
-    .form-group label { display: block; font-size: 0.78rem; font-weight: 700; color: #374151; margin-bottom: 4px; }
-    .form-input { width: 100%; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 7px 10px; font-size: 0.85rem; color: #1e293b; background: #fafafa; font-family: inherit; }
-    .form-input:focus { outline: none; border-color: #4f46e5; box-shadow: 0 0 0 3px rgba(79,70,229,0.1); }
-    textarea.form-input { resize: vertical; }
+    .form-group label { display: block; font-size: 0.8rem; font-weight: 700; color: #374151; margin-bottom: 6px; letter-spacing: -0.3px; }
+    .form-input { width: 100%; border: 1px solid rgba(203, 213, 225, 0.6); border-radius: 10px; padding: 9px 12px; font-size: 0.85rem; color: #1e293b; background: rgba(248, 250, 252, 0.7); font-family: inherit; transition: all 0.2s ease; }
+    .form-input:focus { outline: none; border-color: var(--primary-color); background: #fff; box-shadow: 0 0 0 3.5px rgba(14, 165, 233, 0.1); }
+    textarea.form-input { resize: vertical; min-height: 100px; }
 
     /* === Generator-identical bulk toolbar CSS === */
-    .qfg-bulk-toolbar{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:12px 16px;margin:10px 0 6px;display:flex;flex-direction:column;gap:8px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
-    .qfg-bulk-row{display:flex;flex-wrap:nowrap;gap:12px;align-items:center}
-    .qfg-bulk-group{display:flex;align-items:center;gap:8px}
-    .qfg-bulk-divider{width:1px;height:20px;background:#e2e8f0}
-    .qfg-bulk-spacer{flex:1}
-    .qfg-bulk-select{padding:4px 8px;border:1px solid #cbd5e1;border-radius:7px;font-size:.8rem;color:#334155;background:#f8fafc;height:32px}
-    .qfg-bulk-input{padding:4px 8px;border:1px solid #cbd5e1;border-radius:7px;font-size:.8rem;color:#334155;background:#f8fafc;height:32px}
-    .qfg-bulk-label{font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#64748b;white-space:nowrap}
-    .qfg-select-bar{display:flex;align-items:center;gap:10px;padding:8px 14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;margin-bottom:8px}
-    .qfg-select-all-label{display:flex;align-items:center;gap:6px;font-size:.82rem;font-weight:600;color:#334155;cursor:pointer;user-select:none}
-    .qfg-select-all-label input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:#2563eb}
-    .qfg-sel-count{font-size:.8rem;font-weight:700;color:#2563eb;background:#eff6ff;padding:2px 9px;border-radius:12px}
-    .tc-checkbox{width:16px;height:16px;cursor:pointer;accent-color:#2563eb;flex-shrink:0}
+    .qfg-bulk-toolbar{padding: 14px 18px;display: flex;flex-direction: column;gap: 10px;box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);backdrop-filter: blur(6px);}
+    .qfg-bulk-row{display: flex; flex-wrap: nowrap; gap: 8px; align-items: center;}
+    .qfg-bulk-group{display: flex; align-items: center; gap: 10px;}
+    .qfg-bulk-divider{width: 1px; height: 24px; background: linear-gradient(180deg, transparent 0%, rgba(226, 232, 240, 0.6) 50%, transparent 100%);}
+    .qfg-bulk-spacer{flex: 1;}
+    .qfg-bulk-select{padding: 6px 10px !important;border-radius: 8px !important;font-size: 0.7rem !important;color: #666 !important;height: 32px; transition: all 0.2s ease;font-weight: 500;}
+    .qfg-bulk-select:focus { outline: none; border-color: var(--primary-color); background: #fff; box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1); }
+    .qfg-bulk-input{padding: 6px 10px; border: 1px solid rgba(203, 213, 225, 0.6); border-radius: 8px; font-size: 0.8rem; color: #334155; background: rgba(248, 250, 252, 0.8); height: 32px; transition: all 0.2s ease;}
+    .qfg-bulk-input:focus { outline: none; border-color: var(--primary-color); background: #fff; box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1); }
+    .qfg-bulk-label{font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #64748b; white-space: nowrap;}
+    .qfg-select-bar{display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: linear-gradient(135deg, rgba(248, 250, 252, 0.8) 0%, rgba(241, 245, 249, 0.6) 100%); border: 1px solid rgba(226, 232, 240, 0.6); border-radius: 12px; margin-bottom: 10px;}
+    .qfg-select-all-label{display: flex; align-items: center; gap: 8px; font-size: 0.85rem; font-weight: 600; color: #334155; cursor: pointer; user-select: none;}
+    .qfg-select-all-label input[type=checkbox]{width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary-color); border-radius: 5px;}
+    .qfg-sel-count{font-size: 0.8rem; font-weight: 700; color: #fff; background: linear-gradient(135deg, var(--primary-color) 0%, #0284c7 100%); padding: 4px 12px; border-radius: 14px; box-shadow: 0 2px 8px rgba(14, 165, 233, 0.3);}
+    .tc-checkbox{width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary-color); flex-shrink: 0; border-radius: 5px;}
 
-        /* Tab Styles */
+        /* Enhanced Modern Styling */
+        table { border-collapse: collapse; width: 100%; }
+        table tbody tr { border-bottom: 1px solid rgba(226, 232, 240, 0.5); transition: background 0.2s ease; }
+        table tbody tr:hover { background: rgba(14, 165, 233, 0.04); }
+        table td, table th { padding: 12px 14px; text-align: left; font-size: 0.9rem; }
+        table th { background: linear-gradient(135deg, rgba(248, 250, 252, 0.9) 0%, rgba(241, 245, 249, 0.8) 100%); font-weight: 700; color: #1e293b; border-bottom: 2px solid rgba(226, 232, 240, 0.6); }
+        table td { color: #475569; }
+        
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(203, 213, 225, 0.5); border-radius: 4px; transition: all 0.2s; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(203, 213, 225, 0.8); }
+        
+        /* Badge and Tag Styles */
+        .badge { display: inline-flex; align-items: center; padding: 0.2rem 0.7rem; border-radius: 8px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; background: linear-gradient(135deg, rgba(248, 250, 252, 0.9) 0%, rgba(241, 245, 249, 0.8) 100%); color: #64748b; border: 1px solid rgba(226, 232, 240, 0.6); }
+        .badge.primary { background: linear-gradient(135deg, rgba(14, 165, 233, 0.15) 0%, rgba(14, 165, 233, 0.08) 100%); color: var(--primary-color); border: 1px solid rgba(14, 165, 233, 0.3); }
+        
+        /* Input and Textarea Enhancements */
+        input[type="text"], input[type="email"], input[type="password"], input[type="search"], textarea, select { 
+            font-family: inherit; 
+            transition: all 0.2s ease;
+        }
+        input::placeholder, textarea::placeholder { color: rgba(148, 163, 184, 0.7); }
+
         .tab-btn.active {
             color: var(--primary-color) !important;
             border-bottom-color: var(--primary-color) !important;
@@ -421,40 +493,98 @@ SELECT 'html' AS component, '
         .tab-content.active { display: block !important; }
 
         .sidebar-btn:hover {
-            transform: translateY(-1px);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(15, 23, 42, 0.12);
+            transition: all 0.2s ease;
+        }
+        .sidebar-btn:active {
+            transform: translateY(0);
         }
 
+        .save-action-btn {
+            background: linear-gradient(135deg, #0ea5e9, #0284c7) !important;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.25) !important;
+        }
         .save-action-btn:hover {
-            background: linear-gradient(135deg,#4338ca,#1d4ed8) !important;
-            transform: translateY(-1px);
-            box-shadow: 0 5px 14px rgba(79,70,229,0.5) !important;
+            background: linear-gradient(135deg, #0284c7, #0369a1) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(14, 165, 233, 0.35) !important;
+        }
+        .save-action-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(14, 165, 233, 0.25) !important;
+        }
         }
 
         #md-save-toast {
-            position: fixed;
-            bottom: 28px;
-        /* Modified Indicator & Badge */
-        .modified-indicator { color: #f59e0b; font-weight: 600; font-size: 0.8rem; margin-left: 0.4rem; font-style: italic; }
-        .badge { display: inline-flex; align-items: center; padding: 0.15rem 0.5rem; border-radius: 999px; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; }
+            position: fixed; 
+            top: 1.5rem; 
+            right: 1.5rem; 
+            padding: 1rem 1.5rem; 
+            border-radius: 14px;
+            background: linear-gradient(135deg, #10b981, #059669); 
+            color: white; 
+            font-weight: 600; 
+            font-size: 0.95rem; 
+            z-index: 100000; 
+            display: flex; 
+            align-items: center; 
+            gap: 0.75rem;
+            box-shadow: 0 12px 32px rgba(16, 185, 129, 0.3), 0 0 1px rgba(0, 0, 0, 0.1); 
+            transform: translateY(-30px); 
+            opacity: 0; 
+            visibility: hidden; 
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        #md-save-toast.show { 
+            transform: translateY(0); 
+            opacity: 1; 
+            visibility: visible; 
+        }
+        #md-save-toast.error { 
+            background: linear-gradient(135deg, #f43f5e, #e11d48); 
+            box-shadow: 0 12px 32px rgba(244, 63, 94, 0.3), 0 0 1px rgba(0, 0, 0, 0.1);
+        }
+        #md-save-toast.info { 
+            background: linear-gradient(135deg, #6366f1, #4f46e5); 
+            box-shadow: 0 12px 32px rgba(99, 102, 241, 0.3), 0 0 1px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Modified Indicator */
+        .modified-indicator { 
+            color: #f59e0b; 
+            font-weight: 600; 
+            font-size: 0.8rem; 
+            margin-left: 0.4rem; 
+            font-style: italic; 
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
 
         /* Buttons */
-        .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.25rem; border-radius: 8px; font-size: 0.88rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; border: 1px solid transparent; line-height: 1.2; }
-        .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.75rem; border-radius: 6px; }
-        .btn-primary { background: var(--primary-color); color: white; border-color: var(--primary-color); box-shadow: 0 2px 4px rgba(14, 165, 233, 0.2); }
-        .btn-primary:hover { background: #0284c7; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3); }
-        .btn-secondary { background: #f1f5f9; color: #475569; border-color: #e2e8f0; }
-        .btn-secondary:hover { background: #e2e8f0; color: #1e293b; }
-        .btn-outline { background: transparent; border-color: #e2e8f0; color: #64748b; }
-        .btn-outline:hover { background: #f8fafc; color: var(--primary-color); border-color: var(--primary-color); }
+        .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.25rem; border-radius: 10px; font-size: 0.88rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; border: 1px solid transparent; line-height: 1.2; letter-spacing: -0.3px; }
+        .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.75rem; border-radius: 8px; }
+        .btn-primary { background: linear-gradient(135deg, var(--primary-color) 0%, #0284c7 100%); color: white; border-color: transparent; box-shadow: 0 4px 12px rgba(14, 165, 233, 0.25); }
+        .btn-primary:hover { background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(14, 165, 233, 0.35); }
+        .btn-primary:active { transform: translateY(0); box-shadow: 0 2px 8px rgba(14, 165, 233, 0.25); }
+        .btn-secondary { background: rgba(241, 245, 249, 0.8); color: #475569; border-color: rgba(226, 232, 240, 0.6); transition: all 0.2s ease; }
+        .btn-secondary:hover { background: #e2e8f0; color: #1e293b; border-color: rgba(226, 232, 240, 1); transform: translateY(-1px); }
+        .btn-outline { background: transparent; border-color: rgba(226, 232, 240, 0.8); color: #64748b; }
+        .btn-outline:hover { background: rgba(248, 250, 252, 0.9); color: var(--primary-color); border-color: var(--primary-color); }
 
         /* Modal Enhancements */
-        .md-modal { background: #fff; border-radius: 16px; width: 100%; max-width: 800px; max-height: 90vh; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15); border: 1px solid rgba(255,255,255,0.1); }
-        .modal-header { padding: 1.25rem 1.5rem; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; background: #fafafa; }
-        .modal-header h3 { margin: 0; font-size: 1.1rem; font-weight: 700; color: #1e293b; }
-        .modal-body { padding: 1.5rem; overflow-y: auto; flex: 1; }
-        .modal-footer { padding: 1rem 1.5rem; border-top: 1px solid #f1f5f9; display: flex; justify-content: flex-end; gap: 0.75rem; background: #fafafa; }
-        .close-modal { background: none; border: none; font-size: 1.5rem; color: #94a3b8; cursor: pointer; transition: color 0.1s; display: flex; align-items: center; justify-content: center; width:32px; height:32px; border-radius:50%; }
-        .close-modal:hover { color: #1e293b; background: #f1f5f9; }
+        .md-modal { background: #fff; border-radius: 18px; width: 100%; max-width: 800px; max-height: 90vh; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 20px 60px -12px rgba(15, 23, 42, 0.15), 0 0 1px rgba(0, 0, 0, 0.1); border: 1px solid rgba(226, 232, 240, 0.6); }
+        .modal-header { padding: 1.5rem; border-bottom: 1px solid rgba(226, 232, 240, 0.5); display: flex; justify-content: space-between; align-items: center; background: linear-gradient(135deg, rgba(248, 250, 252, 0.9) 0%, rgba(241, 245, 249, 0.8) 100%); }
+        .modal-header h3 { margin: 0; font-size: 1.15rem; font-weight: 700; color: #1e293b; letter-spacing: -0.5px; }
+        .modal-body { padding: 1.75rem; overflow-y: auto; flex: 1; }
+        .modal-footer { padding: 1.25rem 1.5rem; border-top: 1px solid rgba(226, 232, 240, 0.5); display: flex; justify-content: flex-end; gap: 0.75rem; background: linear-gradient(135deg, rgba(248, 250, 252, 0.5) 0%, rgba(241, 245, 249, 0.3) 100%); }
+        .close-modal { background: none; border: none; font-size: 1.5rem; color: #94a3b8; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; width:36px; height:36px; border-radius:10px; }
+        .close-modal:hover { color: #1e293b; background: rgba(226, 232, 240, 0.5); }
 
         /* Tree View (Hierarchy) Tab Styles */
         .tree-node { margin-left: 1.25rem; border-left: 1px solid #e2e8f0; padding-left: 0.75rem; margin-top: 0.25rem; }
@@ -479,9 +609,62 @@ SELECT 'html' AS component, '
         #md-save-toast.show { transform: translateY(0); opacity: 1; visibility: visible; }
         #md-save-toast.error { background: linear-gradient(135deg,#f43f5e,#e11d48); }
         #md-save-toast.info { background: linear-gradient(135deg,#6366f1,#4f46e5); }
+        #md-editor-tabs .tab-btn{
+            padding:0.5rem 0rem!important;
+            border:none!important;
+            color: #666!important;
+            cursor:pointer;
+            font-weight:700!important;
+            background:transparent!important;
+            box-shadow: none; 
+            border-radius:0!important;
+            margin-bottom:-2px; 
+            text-transform: uppercase;
+            letter-spacing: 0.05em; 
+            transition: all 0.2s;"
+        }
+        #md-editor-tabs .tab-btn.active{
+            color:#0ea5e9!important; 
+            border-bottom: 3px solid #0ea5e9!important;
+        }
+        .tc-list .tc-card {
+            background: var(--bg-primary);
+            padding: 1rem 1.25rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 0.5rem;
+            border: 1px solid var(--border-color);
+            display: flex;
+            gap: 1.5rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .tc-card h5 {
+            color: #333;
+            margin: 0;
+            font-size: 0.9rem;
+        }
+        .qfg-bulk-action-head {
+            display: flex;
+            padding: 1rem;
+            border: 1px solid #f0f0f0;
+            gap: 1rem;
+        }
+        .tc-card .form-input {
+            padding: 6px 10px !important;
+            font-size: 0.7rem !important;
+            font-weight: 500 !important;
+        }
+        .sidebar-btn-container {
+            padding: 12px; 
+            display: flex; 
+            gap: 8px; border-bottom: 1px solid var(--border-color); 
+            background: #fafafa;
+        }
+        .sidebar-btn-container .btn{
+            color : #FFF !important;
+        }
     </style>
 
-    <div class="editor-container">
+    <div class="editor-container" style="background: #f8fafc; padding: 0; display: flex; flex-direction: column;">
         <div id="md-save-toast">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
             <span id="md-save-toast-msg"></span>
@@ -549,18 +732,15 @@ SELECT 'html' AS component, '
                         Explorer
                     </span>
                 </div>
-                <div style="padding: 12px; display: flex; flex-direction: column; gap: 8px; border-bottom: 1px solid var(--border-color); background: #fafafa;">
-                    <button id="btnSidebarChange" class="sidebar-btn" style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:8px 12px;border:none;border-radius:6px;background:linear-gradient(135deg,#0ea5e9,#0284c7);color:#fff;font-size:0.85rem;font-weight:600;cursor:pointer;box-shadow:0 2px 4px rgba(14,165,233,0.25);transition:transform 0.2s;">
+                <div class="sidebar-btn-container">
+                    <button id="btnSidebarChange" title="Change Folder" class="sidebar-btn btn" style="background: #89c2dc4a !important;color: #0ea5e9 !important;">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-6l-2-2H5a2 2 0 0 0-2 2z"/></svg>
-                        Change Folder
                     </button>
-                    <button id="btnSidebarDownload" class="sidebar-btn" style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:8px 12px;border:none;border-radius:6px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;font-size:0.85rem;font-weight:600;cursor:pointer;box-shadow:0 2px 4px rgba(16,185,129,0.25);transition:transform 0.2s;">
+                    <button id="btnSidebarDownload" title="Download Project" class="sidebar-btn btn" style="background: #e0f0e5;color: #1ea388 !important;">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" /><path d="M7 11l5 5l5 -5" /><path d="M12 4l0 12" /></svg>
-                        Download Project
                     </button>
-                    <button id="btnSidebarClose" class="sidebar-btn" style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:8px 12px;border:none;border-radius:6px;background:linear-gradient(135deg,#f43f5e,#e11d48);color:#fff;font-size:0.85rem;font-weight:600;cursor:pointer;box-shadow:0 2px 4px rgba(244,63,94,0.25);transition:transform 0.2s;">
+                    <button id="btnSidebarClose" title="Close Project" class="sidebar-btn btn" style="color: #e11d48 !important;background: #e5d4d8a8;">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M18 6l-12 12" /><path d="M6 6l12 12" /></svg>
-                        Close Project
                     </button>
                 </div>
                 <div id="folderTree" class="tree-content">
@@ -569,169 +749,151 @@ SELECT 'html' AS component, '
             </aside>
 
             <!-- Main Content -->
-            <main class="editor-main">
+            <main class="editor-main" style="flex-direction: column; display: flex;">
 
-
-
-                    
-                <div class="editor-header">
-                    <h1 style="font-size:1.1rem;margin:0;font-weight:700;letter-spacing:-0.01em;display:flex;align-items:center;">
+                <!-- Header Section: Fixed -->
+                <div class="editor-header" style="border-bottom: 1px solid rgba(226, 232, 240, 0.6); flex-shrink: 0; background: linear-gradient(135deg, #fff 0%, #f8fafc 100%);">
+                    <h1 style="font-size:1rem;margin:0;font-weight:700;letter-spacing:-0.01em;display:flex;align-items:center;">
                         <i class="fas fa-file-invoice" style="margin-right:0.6rem;color:var(--primary-color);"></i>
                         <span id="editorFileTitle">Markdown Editor</span>
                     </h1>
-                    <div style="display:flex;align-items:center;gap:1.25rem;">
-                        <span id="totalTestCases" class="badge">0 Cases</span>
-                        <button id="btnSaveFileAction" class="btn btn-primary" style="background:linear-gradient(135deg,var(--primary-color),#4f46e5); padding: 0.5rem 1.25rem;">
+                    <div style="display:flex;align-items:center;gap:1.5rem;">
+                        <span id="totalTestCases" class="badge" style="padding: 0.3rem 0.9rem; font-size: 0.8rem;">0 Cases</span>
+                        <button id="btnSaveFileAction" class="btn btn-primary" style="background:linear-gradient(135deg,var(--primary-color),#0284c7); padding: 0.6rem 1.5rem; font-weight: 700;">
                             <i class="fas fa-save"></i> Save Changes
                         </button>
                     </div>
                 </div>
-                <!-- Top Tabs -->
-                <!-- Top Tabs -->
-                <div class="tabs" style="display:flex;gap:1.5rem;padding:0;background:#fff;align-items:center;flex-wrap:wrap; margin-top: 10px; border-radius:12px 12px 0 0; border: none; border-bottom: 2px solid #e2e8f0; padding-left: 20px;">
-                    <button class="tab-btn active" data-tab="preview"  style="padding:1rem 0rem!important;border:none!important;cursor:pointer;font-size:0.82rem!important;font-weight:700!important;background:transparent!important;color:#0ea5e9!important; box-shadow: none; border-bottom: 2.5px solid #0ea5e9!important; border-radius:0!important;margin-bottom:-2px; text-transform: uppercase; letter-spacing: 0.05em;"><i class="fas fa-eye" style="margin-right:6px;"></i>Preview</button>
-                    <button class="tab-btn"        data-tab="treeView" style="padding:1rem 0rem!important;border:none!important;cursor:pointer;font-size:0.82rem!important;font-weight:700!important;background:transparent!important;color:#64748b!important; box-shadow: none; border-radius:0!important;margin-bottom:-2px;border-bottom: 2.5px solid transparent!important; text-transform: uppercase; letter-spacing: 0.05em;"><i class="fas fa-sitemap" style="margin-right:6px;"></i>Hierarchy</button>
-                    <button class="tab-btn"        data-tab="markdown" style="padding:1rem 0rem!important;border:none!important;cursor:pointer;font-size:0.82rem!important;font-weight:700!important;background:transparent!important;color:#64748b!important; box-shadow: none; border-radius:0!important;margin-bottom:-2px;border-bottom: 2.5px solid transparent!important; text-transform: uppercase; letter-spacing: 0.05em;"><i class="fas fa-code" style="margin-right:6px;"></i>Markdown</button>
-                    <button class="tab-btn"        data-tab="json"     style="padding:1rem 0rem!important;border:none!important;cursor:pointer;font-size:0.82rem!important;font-weight:700!important;background:transparent!important;color:#64748b!important; box-shadow: none; border-radius:0!important;margin-bottom:-2px;border-bottom: 2.5px solid transparent!important; text-transform: uppercase; letter-spacing: 0.05em;"><i class="fas fa-brackets-curly" style="margin-right:6px;"></i>JSON</button>
+
+                <!-- Tabs Section: Fixed -->
+                <div id="md-editor-tabs" class="tabs" style="display:flex;gap:2rem;padding:0 1rem;background:#fff;align-items:center;flex-wrap:wrap; border-bottom: 2px solid rgba(226, 232, 240, 0.6); flex-shrink: 0;">
+                    <button class="tab-btn active" data-tab="preview"><i class="fa fa-eye"></i>Preview</button>
+                    <button class="tab-btn" data-tab="treeView"><i class="fa fa-sitemap"></i>Hierarchy</button>
+                    <button class="tab-btn" data-tab="markdown"><i class="fa fa-code"></i>Markdown</button>
+                    <button class="tab-btn" data-tab="json"><i class="fa fa-sticky-note"></i>JSON</button>
                 </div>
 
-                <!-- Stretched Bulk Toolbar (Full-Width Optimization) -->
-                <div class="qfg-bulk-toolbar" style="padding: 10px 20px;">
-                  
-                  <!-- Row 1: Selection | Divider | Actions | Divider | Properties | Spacer | Apply -->
-                  <div class="qfg-bulk-row" style="border-bottom: 1px solid #f1f5f9; padding-bottom: 10px;">
-                    <!-- Left: Selection -->
-                    <div class="qfg-bulk-group">
-                        <label class="qfg-select-all-label" style="display:flex;align-items:center;gap:8px;">
-                          <input type="checkbox" id="selectAllTcs" style="width:16px;height:16px;">
-                          <span style="font-weight:700">SELECT ALL</span>
-                        </label>
-                        <span id="selectedCountText" class="badge" style="background:#e0f2fe; color:#0369a1; border:1px solid #bae6fd;">0 selected</span>
-                    </div>
-
-                    <div class="qfg-bulk-divider"></div>
-
-                    <!-- Center-Left: Quick Edit -->
-                    <div class="qfg-bulk-group">
-                        <button id="bulkEditBtn" class="btn btn-sm btn-primary" style="padding: 5px 14px; font-weight:700;">
-                            <i class="fas fa-edit"></i> Edit
-                        </button>
-                        <button id="bulkDeleteBtn" class="btn btn-sm" style="padding: 5px 14px; background:#fff1f2; color:#be123c; border:1px solid #fecaca; font-weight:700;">
-                            <i class="fas fa-trash-can"></i> Delete
-                        </button>
-                    </div>
-
-                    <div class="qfg-bulk-divider"></div>
-
-                    <!-- Center: Properties (Scenario/Exec) -->
-                    <div class="qfg-bulk-group" style="gap:12px;">
-                        <span class="qfg-bulk-label">Scenario</span>
-                        <select id="bulkScenarioType" class="qfg-bulk-select" style="min-width: 15vw;">
-                          <option value="">-- Scenario Type --</option>
-                        </select>
-                        <span class="qfg-bulk-label">Exec</span>
-                        <select id="bulkExecutionType" class="qfg-bulk-select" style="min-width: 12vw;">
-                          <option value="">-- Exec Type --</option>
-                        </select>
-                        <input type="text" id="bulkTags" class="qfg-bulk-input" placeholder="+ Tag" style="width: 110px;" />
-                        <button id="applyBulkProps" class="btn btn-sm btn-primary" style="padding: 4px 12px; font-weight:700;">Set</button>
-                    </div>
-
-                    <div class="qfg-bulk-spacer"></div>
-
-                    <!-- Right: Assign/Prio Apply -->
-                    <div class="qfg-bulk-group">
-                        <select id="bulkAssignSelect" class="qfg-bulk-select" style="min-width: 140px;">
-                          <option value="">-- Assignee --</option>
-                        </select>
-                        <select id="bulkPrioritySelect" class="qfg-bulk-select" style="min-width: 90px;">
-                          <option value="">-- Prio --</option>
-                          <option value="Critical">Critical</option>
-                          <option value="High">High</option>
-                          <option value="Medium">Medium</option>
-                          <option value="Low">Low</option>
-                        </select>
-                        <button id="applyBulkActions" class="btn btn-sm btn-primary" style="padding: 4px 16px; font-weight:800; background:linear-gradient(135deg,#2563eb,#0ea5e9);">APPLY</button>
-                    </div>
-                  </div>
-
-                  <!-- Row 2: Add Run | Spacer | Reset -->
-                  <div class="qfg-bulk-row" style="padding-top: 6px;">
-                    <!-- Left: Run Config -->
-                    <div class="qfg-bulk-group" style="gap:15px;">
-                        <div style="display:flex;align-items:center;gap:10px;">
-                            <span class="qfg-bulk-label" style="color:#0ea5e9">Add Run</span>
-                            <input type="text" id="bulkCycleName" value="1.0" class="qfg-bulk-input" style="width:60px; text-align:center; font-weight:700;" />
+                <!-- Scrollable Content Area -->
+                <div style="flex: 1; overflow-y: auto; display: flex; flex-direction: column;">
+                    
+                    <!-- Bulk Toolbar: Sticky -->
+                    <div class="qfg-bulk-toolbar">
+                      
+                      <!-- Row 1: Selection | Divider | Actions | Divider | Properties | Spacer | Apply -->
+                      <div class="qfg-bulk-row" style="border-bottom: 1px solid rgba(226, 232, 240, 0.4); padding-bottom: 12px; margin-bottom: 12px;">
+                        <!-- Left: Selection -->
+                        <div class="qfg-bulk-group">
+                            <label class="qfg-select-all-label" style="display:flex;align-items:center;gap:8px;">
+                              <input type="checkbox" id="selectAllTcs" style="width:16px;height:16px;">
+                              <span style="font-weight:700;font-size: 0.7rem;">SELECT ALL</span>
+                            </label>
+                            <span id="selectedCountText" class="badge" style="background: linear-gradient(135deg, rgba(14, 165, 233, 0.1) 0%, rgba(14, 165, 233, 0.05) 100%); color:#0369a1; border:1px solid rgba(14, 165, 233, 0.3); padding: 0.25rem 0.75rem;">0 selected</span>
                         </div>
-                        <div style="display:flex;align-items:center;gap:6px;position:relative;">
-                            <input type="text" id="bulkCycleDateText" class="qfg-bulk-input qf-date" placeholder="MM-DD-YYYY" style="width: 140px; cursor:pointer;" />
-                            <input type="hidden" id="bulkCycleDate" />
-                            <i class="fas fa-calendar-alt" style="position:absolute; right:8px; pointer-events:none; color:#94a3b8; font-size:0.85rem;"></i>
+
+                        <div class="qfg-bulk-divider"></div>
+
+                        <!-- Center-Left: Quick Edit -->
+                        <div class="qfg-bulk-group">
+                            <button id="bulkEditBtn" class="btn btn-sm btn-primary">
+                                <i class="fa fa-pencil" aria-hidden="true"></i>
+                            </button>
+                            <button id="bulkDeleteBtn" class="btn btn-sm btn-danger">
+                                <i class="fa fa-trash" aria-hidden="true"></i>
+                            </button>
                         </div>
-                        <div class="qfg-bulk-divider" style="height:16px;"></div>
-                        <select id="bulkCycleAssignee" class="qfg-bulk-select" style="min-width: 180px;">
-                          <option value="">-- Select Assignee --</option>
-                        </select>
-                        <select id="bulkCycleStatus" class="qfg-bulk-select" style="min-width: 150px;">
-                          <option value="">-- Choose Status --</option>
-                        </select>
-                        <button id="applyBulkCycle" class="btn btn-sm btn-primary" style="background: #0ea5e9; border:none; padding: 4px 18px; font-weight:700;">
-                          <i class="fas fa-plus"></i> ADD RUN ENTRY
+
+                        <div class="qfg-bulk-divider"></div>
+
+                        <!-- Center: Properties (Scenario/Exec) -->
+                        <div class="qfg-bulk-group" style="gap:14px;">
+                            <label class="qfg-bulk-label">Scenario</label>
+                            <select id="bulkScenarioType" class="qfg-bulk-select">
+                              <option value="">-- Scenario Type --</option>
+                            </select>
+                            <label class="qfg-bulk-label">Exec</label>
+                            <select id="bulkExecutionType" class="qfg-bulk-select">
+                              <option value="">-- Exec Type --</option>
+                            </select>
+                            <input type="text" id="bulkTags" class="qfg-bulk-input" placeholder="+ Tag" style="width: 110px; font-weight: 500;" />
+                        </div>
+
+
+                        <!-- Right: Assign/Prio Apply -->
+                        <div class="qfg-bulk-group">
+                            <select id="bulkAssignSelect" class="qfg-bulk-select" >
+                              <option value="">-- Assignee --</option>
+                            </select>
+                            <select id="bulkPrioritySelect" class="qfg-bulk-select" >
+                              <option value="">-- Prio --</option>
+                              <option value="Critical">Critical</option>
+                              <option value="High">High</option>
+                              <option value="Medium">Medium</option>
+                              <option value="Low">Low</option>
+                            </select>
+                            <button id="applyBulkActions" class="btn btn-sm btn-primary" style="padding: 6px 16px; font-weight:800; background:linear-gradient(135deg,#2563eb,#0ea5e9); font-size: 0.8rem;">APPLY</button>
+                        </div>
+                      </div>
+
+                      <!-- Row 2: Add Run | Spacer | Reset -->
+                      <div class="qfg-bulk-row" style="padding-top: 0;">
+                      <div class="qfg-bulk-spacer"></div>
+
+                        <!-- Left: Run Config -->
+                        <div class="qfg-bulk-group" style="gap:16px;">
+                            <div style="display:flex;align-items:center;gap:10px;">
+                                <label class="qfg-bulk-label" style="margin-bottom: 0;">Run Cycle</label>
+                                <input type="text" id="bulkCycleName" value="1.0" class="qfg-bulk-input" style="width:70px; text-align:center; font-weight:700;" />
+                            </div>
+                            <div style="display:flex;align-items:center;gap:8px;position:relative;">
+                                <input type="text" id="bulkCycleDateText" class="qfg-bulk-input qf-date" placeholder="MM-DD-YYYY" style="width: 140px; cursor:pointer; font-weight: 500;" />
+                                <input type="hidden" id="bulkCycleDate" />
+                                <i class="fas fa-calendar-alt" style="position: absolute; right: 10px; color: #94a3b8; font-size: 0.85rem; pointer-events: none;"></i>
+                            </div>
+                            <button id="applyBulkCycle" class="btn btn-sm btn-primary" style="background: linear-gradient(135deg, #0ea5e9, #0284c7); border:none; padding: 6px 18px; font-weight:700; font-size: 0.8rem;">ADD</button>
+                        </div>
+
+
+                        <!-- Right: Reset Button -->
+                        <button id="resetBulkActions" class="btn btn-sm" style="background:linear-gradient(135deg, rgba(248,250,252,0.9), rgba(241,245,249,0.8)); border:1px solid rgba(226, 232, 240, 0.6); color:#64748b; padding: 6px 14px; font-weight: 600; font-size: 0.8rem; transition: all 0.2s;" title="Reset All Fields">
+                            <i class="fas fa-undo"></i> Reset
                         </button>
+                      </div>
                     </div>
 
-                    <div class="qfg-bulk-spacer"></div>
-
-                    <!-- Right: Tools -->
-                    <div class="qfg-bulk-group">
-                        <button id="resetBulkActions" class="btn btn-sm" style="background:#f8fafc; border:1px solid #e2e8f0; color:#94a3b8; padding: 6px 12px;" title="Reset All Fields">
-                          <i class="fas fa-rotate-left"></i> Reset
-                        </button>
-                    </div>
-                  </div>
-                </div>
-
-
-
-                <div id="editorContentScroll" class="editor-content-scroll" style="position: relative;">
+                    <!-- Main Content: Scrollable -->
+                    <div style="flex: 1; overflow-y: auto; padding: 24px;">
+                        <!-- Test Cases Table -->
 
                     <!-- Results.js targets this -->
                     <div class="tab-content active" id="preview" style="display: block;">
-
-                        <div id="testCasesPreview" style="padding: 1.5rem;">
-                            <!-- Top empty state header -->
-                            <div style="margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid #e2e8f0; margin-top:-2rem;">
-                                <h1 style="color: #0ea5e9; font-size: 1.1rem; font-weight: 700; margin: 0;">Select a file to edit</h1>
+                        <div id="testCasesPreview" style="padding: 0;">
+                            <!-- Empty state header -->
+                            <div style="margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid rgba(226, 232, 240, 0.6); margin-top: 0;">
+                                <h2 style="color: #0ea5e9; font-size: 1.1rem; font-weight: 700; margin: 0;">Test Cases</h2>
                             </div>
                             <!-- Centered icon empty state -->
-                            <div style="text-align: center; color: var(--text-muted); padding-top: 5rem;">
+                            <div style="text-align: center; color: var(--text-muted); padding-top: 5rem; padding-bottom: 5rem;">
                                 <i class="fas fa-file-invoice" style="font-size: 3rem; opacity: 0.3; margin-bottom: 1rem;"></i>
                                 <p style="font-size: 0.9rem; color:#94a3b8;">Select a Markdown file from the sidebar to view and edit schemas.</p>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="tab-content" id="treeView" style="display: none; padding: 1.5rem;">
-                        <div id="treeViewContent"></div>
+                    <div class="tab-content" id="treeView" style="display: none; padding: 0;">
+                        <div id="treeViewContent" style="padding: 1.5rem;"></div>
                     </div>
                     
-                    <div class="tab-content" id="markdown" style="display: none; padding: 1.5rem;">
-                        <textarea id="markdownContent" style="width: 100%; height: 600px; background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border-color); padding: 1rem; font-family: monospace;"></textarea>
+                    <div class="tab-content" id="markdown" style="display: none; padding: 0;">
+                        <textarea id="markdownContent" style="width: 100%; height: 600px; background: var(--bg-card); color: var(--text-primary); border: 1px solid rgba(226, 232, 240, 0.6); padding: 1rem; font-family: Monaco, Menlo, Ubuntu Mono, monospace; resize: none; border-radius: 0; margin: 0;"></textarea>
                     </div>
                     
-                    <div class="tab-content" id="json" style="display: none; padding: 1.5rem;">
-                        <pre id="jsonContent" style="background: var(--bg-card); color: var(--text-primary); padding: 1rem; overflow: auto; max-height: 600px; border-radius: 8px;"></pre>
+                    <div class="tab-content" id="json" style="display: none; padding: 0;">
+                        <pre id="jsonContent" style="background: var(--bg-card); color: var(--text-primary); padding: 1.5rem; overflow: auto; max-height: 600px; border-radius: 0; margin: 0; font-family: Monaco, Menlo, Ubuntu Mono, monospace; font-size: 0.85rem;"></pre>
+                    </div>
                     </div>
                 </div>
-                </div>
-
-
-                </div>
-
-                </div>
-
+            </main>
         </div>
-    </div>
 
     <!-- Modals (Copied from Results page for editing functionality) -->
     
@@ -990,4 +1152,3 @@ SELECT 'html' AS component, '
 </div>
 </div>
 ' AS html;
-

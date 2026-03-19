@@ -175,7 +175,8 @@
         if (cfg.dataset.reqidformat) _reqIdFormat = cfg.dataset.reqidformat;
       } catch (_) { }
     }
-    const today = new Date().toISOString().slice(0, 10);
+    const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }).replaceAll('/', '-')
+
     // Init Requirement ID for 3-level if unset
     const prj = (document.getElementById("qfg-project")?.value || "").trim();
     if (!getVal("qfg-req-id")) {
@@ -879,7 +880,7 @@
           showModal("No Requirement Details", "Please enter a Requirement Details.");
           genBtn.disabled = false;
           if (btnIcon) btnIcon.innerHTML = "✨";
-          if (btnText) btnText.textContent = "Create Test Cases with AI";
+          if (btnText) btnText.textContent = "Create Test Cases";
           return;
         }
 
@@ -1178,7 +1179,7 @@
       '<button id="qfg-md-format-btn" style="padding:4px 12px;background:#334155;color:#94a3b8;border:none;border-radius:6px;font-size:.75rem;font-weight:700;cursor:pointer">&#9889; Re-generate</button>' +
       '<button id="qfg-md-dl-btn" style="padding:4px 14px;background:#0d9488;color:#fff;border:none;border-radius:6px;font-size:.75rem;font-weight:700;cursor:pointer">&#11015; Download .md</button>' +
       "</div>" +
-      '<textarea id="qfg-md-panel" spellcheck="false" style="width:100%;box-sizing:border-box;background:#0f172a;color:#e2e8f0;padding:20px;font-family:Consolas,monospace;font-size:0.78rem;line-height:1.7;resize:vertical;min-height:480px;border:none;outline:none;"></textarea>' +
+      '<textarea id="qfg-md-panel" spellcheck="false" style="width:100%;box-sizing:border-box;background:#0f172a;color:#e2e8f0;padding:20px;font-family:Consolas,monospace;font-size:0.78rem;line-height:1.7;resize:vertical;min-height:480px !important;border:none;outline:none;"></textarea>' +
       "</div>" +
       "</div>" +
       // ── JSON tab ───────────────────────────────────────────────────────
@@ -1289,7 +1290,7 @@
       </div>
       <p style="margin:6px 0 0">AI-generated HFM markdown — use bulk tools and per-case controls to refine, then download.</p>
       <div class="qfg-results-meta">
-        <span style="display: flex;align-items: center;gap: 8px;color: #FFF;background: #03A9F4;border-radius:5px">
+        <span style="display: flex;align-items: center;gap: 8px;color: #FFF;background: #169fb9;border-radius:5px">
           &#128193; ${esc(ctx.project)} 
           <button class="qfg-action-sm" id="editProjectBtn" style="background:#fff!important;color:#1e40af!important;border:none!important;box-shadow:0 1px 3px rgba(0,0,0,0.1)!important;padding:2px 8px;font-size:0.7rem;">&#128393; </button>
         </span>
@@ -1303,7 +1304,7 @@
         </span>
         <span>&#9881; ${esc(ctx.testType)}</span>
         <span>&#128197; Cycle ID: ${esc(ctx.cycle)}</span>
-        <span>&#128196; Cycle Date: ${isoToDisplay(ctx.cycleDate)}</span>
+        <span>&#128196; Cycle Date: ${ctx.cycleDate}</span>
       </div>
     </div>`;
   }
@@ -1340,7 +1341,7 @@
       /* Keep existing tab button styles below */
       .qfg-tab-btn{padding:7px 18px;border:none; border-radius: 5px 5px 0 0; font-size:.78rem;font-weight:700;cursor:pointer;transition:all .15s;background:#e2e8f0;color:#475569;}
       .qfg-tab-btn:hover{opacity:.88;}
-      .qfg-tab-active{background:#7c3aed!important;color:#fff!important;}
+      .qfg-tab-active{background:#40bac6!important;color:#fff!important;}
       .qfg-tab-btn:not(.qfg-tab-active){background: #FFF;color: #333; border: 1px solid #CCC;border-bottom: 0;}
       .qfg-bulk-select, .qfg-bulk-input {
         background: #fff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 10px !important;
@@ -1391,7 +1392,7 @@
         </div>
 
         <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
-          ${btn("bulkDownloadBtn", '<i class="fas fa-download"></i> Download .md', "font-size: 0.85rem !important; background: #179a98; color: #fff;white-space: nowrap; gap:0 !important; padding:10px !important;")}
+          ${btn("bulkDownloadBtn", '<i class="fas fa-download"></i> Download .md', "font-size: 0.85rem !important; background: #169fb9; color: #fff;white-space: nowrap; gap:0 !important; padding:10px !important;")}
         </div>
       </div>
     <div class="qfg-bulk-toolbar" style="padding:12px 16px;">      
@@ -1422,7 +1423,7 @@
             ${sel("bulkPrioritySelect", "-- Priority --", priOpts, "width:100%;")}
           </div>
           <div>
-            ${btn("applyBulkActions", "APPLY", "background:#0ea5e9;color:#fff;height:42px;padding:10px;margin-top:20px;width:150px;")}
+            ${btn("applyBulkActions", "APPLY", "background:#169fb9;color:#fff;height:42px;padding:10px;margin-top:20px;width:150px;")}
           </div>
         </div>
       </section>
@@ -1452,7 +1453,7 @@
             ${sel("bulkCycleStatus", "-- Status --", stOpts, "width:100%;")}
           </div>
           <div>
-            ${btn("applyBulkCycle", "ADD RUN", "background:#0ea5e9;color:#fff;height:42px;padding:10px;margin-top:20px;width:150px;")}
+            ${btn("applyBulkCycle", "ADD RUN", "background:#169fb9;color:#fff;height:42px;padding:10px;margin-top:20px;width:150px;")}
           </div>
         </div>
       </section>
@@ -1474,10 +1475,18 @@
             <span id="selCount" class="badge" style="background:#e0f2fe;color:#0369a1;border:1px solid #bae6fd;font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:10px !important;white-space:nowrap;">0 SELECTED</span>
           </div>
         </div>
+
         <div style="display:flex;">
-          <button id="qfg-add-case-btn" style="background: #29a454;color: #FFFFFF;border: 1.5px solid #29a454;border-radius: 8px;padding: 7px 15px;font-size: 0.8rem;font-weight: 700;cursor: pointer;display: flex;">
+          <button id="bulkRunBtn" style="background: #169fb9;color: #FFFFFF;border: 1.5px solid #29a454;border-radius: 8px;padding: 7px 15px;font-size: 0.8rem;font-weight: 700;cursor: pointer;display: flex; margin-right:20px">
+          Run Cycle
+          </button>
+          <button id="bulkEditBtn" style="background: #169fb9;color: #FFFFFF;border: 1.5px solid #29a454;border-radius: 8px;padding: 7px 15px;font-size: 0.8rem;font-weight: 700;cursor: pointer;display: flex; margin-right:20px">
+          Bulk Update
+          </button>
+          <button id="qfg-add-case-btn" style="background: #169fb9;color: #FFFFFF;border: 1.5px solid #29a454;border-radius: 8px;padding: 7px 15px;font-size: 0.8rem;font-weight: 700;cursor: pointer;display: flex;">
           &#43;ADD NEW TEST CASE
           </button>
+
         </div>
       </div>`;
     // 5-level: use multi-plan structure if available
@@ -1778,7 +1787,7 @@
                   </select>
               </div>
               <div class="qfg-field">
-                  <label style="font-size: 0.8rem; color: #475569; display: block; margin-bottom: 4px;">Tags (comma separated)</label>
+                  <label style="font-size: 0.8rem; color: #1d8397; display: block; margin-bottom: 4px;">Tags (comma separated)</label>
                   <div style="display: flex; gap: 0.5rem;">
                       <input type="text" id="ecTags" style="flex: 1; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size:0.85rem;" />
                       <select id="ecTagsSelect" style="width: auto; padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px; background: white; font-size:0.85rem;" onchange="if(this.value){let el=document.getElementById('ecTags');el.value=el.value?el.value+', '+this.value:this.value;this.value=''}">
@@ -1895,7 +1904,7 @@
         <div class="qfg-field" style="margin-top:12px">
           <label>Add Tags (comma separated)</label>
           <input type="text" id="modalTags" placeholder="e.g. Functional, Login"/>
-          <div style="color:#3b82f6;font-size:.72rem;margin-top:4px">New tags will be appended to existing ones.</div>
+          <div style="color:#1d8397;font-size:.72rem;margin-top:4px">New tags will be appended to existing ones.</div>
         </div>
         <div class="qfg-modal-footer">
           <button class="qfg-btn-reset"    id="bulkEditModalCancel">Cancel</button>
@@ -2367,6 +2376,8 @@
       document.getElementById("bulkEditModal").style.display = "none";
       renderResults(_cases, _ctx);
     });
+
+
 
     // Click-outside for all overlays
     document.querySelectorAll(".qfg-modal-overlay").forEach((ov) => {

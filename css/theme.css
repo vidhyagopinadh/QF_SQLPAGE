@@ -543,12 +543,11 @@ textarea {
 .btn {
   border-radius: var(--radius-md) !important;
   font-weight: 600 !important;
-  font-size: 0.9375rem !important;
-  padding: 10px 20px !important;
+  font-size: 0.85rem !important;
+  padding: 10px !important;
   transition: all var(--transition-fast) !important;
   cursor: pointer !important;
   border: none !important;
-  display: inline-flex !important;
   align-items: center !important;
   gap: 8px !important;
 }
@@ -560,7 +559,8 @@ textarea {
 
 .btn-primary,
 .btn-default {
-  background: linear-gradient(135deg, var(--primary), var(--accent)) !important;
+  /*background: linear-gradient(135deg, var(--primary), var(--accent)) !important;*/
+  background: linear-gradient(135deg, #1bbac8, #439e8c) !important;
   color: #ffffff !important;
   border: none !important;
   box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2) !important;
@@ -587,7 +587,7 @@ textarea {
 
 .btn-danger,
 .btn-outline-danger {
-  background: var(--danger) !important;
+  background: #cf3535 !important;
   color: #ffffff !important;
   border: none !important;
 }

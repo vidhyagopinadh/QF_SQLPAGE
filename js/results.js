@@ -603,9 +603,9 @@ function renderTestCasesList() {
 
   // Display Project Info
   html += `
-    <div class="project-header" style="margin-bottom: 2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+    <div class="project-header" style=" padding-bottom: 1rem;">
         <div style="display: flex; justify-content: space-between; align-items: center;">
-            <h1 style="color: var(--text-primary); font-size: 1.5rem; margin: 0;">
+            <h1 style="color: var(--text-primary); font-size: 1.2rem; margin: 0;">
                 <i class="fas fa-project-diagram" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
                 ${generatedTestCases.projectName}
             </h1>
@@ -689,6 +689,7 @@ function renderTestCasesList() {
                     `;
         }
 
+
         html += `<div class="tc-list">`;
 
         suite.testCases.forEach((tc, tIdx) => {
@@ -701,9 +702,9 @@ function renderTestCasesList() {
           const currentAssignee =
             tc.evidenceHistory && tc.evidenceHistory.length > 0
               ? tc.evidenceHistory[0].assignee ||
-                tc.evidenceHistory[0].executedBy ||
-                tc.assignee ||
-                "Unassigned"
+              tc.evidenceHistory[0].executedBy ||
+              tc.assignee ||
+              "Unassigned"
               : tc.assignee || tc.createdBy || "Unassigned";
 
           const priority = tc.priority || "Medium";
@@ -713,28 +714,31 @@ function renderTestCasesList() {
           const stIdxArg = isLevel6 ? stIdx : "null";
 
           html += `
-                    <div class="tc-card" style="background: var(--bg-primary); padding: 1.25rem 1.5rem; border-radius: var(--border-radius); margin-bottom: 0.85rem; border: 1px solid var(--border-color); display: flex; gap: 1.5rem; transition: transform 0.2s, box-shadow 0.2s;">
-                        <div style="padding-top: 0.35rem;">
+                    <div class="tc-card">
+                        <div style="padding-top: 0.25rem;">
                             <input type="checkbox" class="tc-checkbox" 
                                 data-stid="${stIdxArg}" data-pid="${pIdx}" data-sid="${sIdx}" data-tid="${tIdx}"
                                 style="width: 20px; height: 20px; accent-color: var(--primary-color); cursor: pointer;">
                         </div>
                         <div style="flex: 1; display: flex; flex-direction: column; gap: 0.5rem;">
                             <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <h5 style="color: var(--text-primary); margin: 0; font-size: 1.05rem; font-weight: 700;">${tc.title || "Untitled Test Case"}</h5>
-                                <span style="color: var(--text-muted); font-size: 0.8rem; font-family: monospace; background: #f1f5f9; padding: 2px 8px; border-radius: 4px;">${tcId && tcId !== "undefined" ? tcId : "NO-ID"}</span>
+                                <h5>${tc.title || "Untitled Test Case"}</h5>
                             </div>
                             
                             <div style="display: flex; gap: 1.5rem; align-items: center; background: #fafafa; padding: 8px 12px; border-radius: 8px; border: 1px solid #f1f5f9;">
                                 <div style="display: flex; gap: 0.65rem; flex-shrink: 0;">
-                                    <button class="btn btn-sm btn-outline" style="padding: 3px 12px; font-size: 0.78rem; font-weight: 600;" data-action="editTestCase" data-stid="${stIdxArg}" data-pid="${pIdx}" data-sid="${sIdx}" data-tid="${tIdx}"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="btn btn-sm btn-outline-danger" style="padding: 3px 12px; font-size: 0.78rem; font-weight: 600;" data-action="deleteTestCase" data-stid="${stIdxArg}" data-pid="${pIdx}" data-sid="${sIdx}" data-tid="${tIdx}"><i class="fas fa-trash-can"></i> Delete</button>
+                                    <button class="btn btn-sm btn-primary" style="font-size: 0.6rem !important;" data-action="editTestCase" data-stid="${stIdxArg}" data-pid="${pIdx}" data-sid="${sIdx}" data-tid="${tIdx}"><i class="fa fa-pencil"></i></button>
+                                    <button class="btn btn-sm btn-danger" style="font-size: 0.6rem !important;" data-action="deleteTestCase" data-stid="${stIdxArg}" data-pid="${pIdx}" data-sid="${sIdx}" data-tid="${tIdx}"><i class="fa fa-trash"></i></button>
                                 </div>
                                 <div style="height: 20px; width: 1px; background: #e2e8f0;"></div>
+                                <div> 
+                                <span style="color: var(--text-muted); font-size: 0.8rem; font-family: monospace; background: #d8e2ec; padding: 2px 8px; border-radius: 4px;">${tcId && tcId !== "undefined" ? tcId : "NO-ID"}</span>
+                                </div>
+                                <div style="flex: 1;"></div> <!-- Spacer -->
                                 <div style="display: flex; align-items: center; gap: 0.75rem;">
+
                                     <label style="font-size: 0.65rem; color: #64748b; text-transform: uppercase; font-weight: 800; letter-spacing: 0.05em;">Priority</label>
                                     <select class="form-input priority-selector priority-${priority.toLowerCase()}" 
-                                        style="padding: 3px 10px; font-size: 0.85rem; width: auto; font-weight: 700;" 
                                         data-action="quickPriority" data-stid="${stIdxArg}" data-pid="${pIdx}" data-sid="${sIdx}" data-tid="${tIdx}">
                                         <option value="Critical" ${priority === "Critical" ? "selected" : ""}>Critical</option>
                                         <option value="High" ${priority === "High" ? "selected" : ""}>High</option>
@@ -742,24 +746,22 @@ function renderTestCasesList() {
                                         <option value="Low" ${priority === "Low" ? "selected" : ""}>Low</option>
                                     </select>
                                 </div>
-                                <div style="flex: 1;"></div> <!-- Spacer -->
+                                
                                 <div style="display: flex; align-items: center; gap: 0.75rem;">
                                     <label style="font-size: 0.65rem; color: #64748b; text-transform: uppercase; font-weight: 800; letter-spacing: 0.05em;">Assignee</label>
-                                    <select class="form-input" 
-                                        style="padding: 3px 10px; font-size: 0.85rem; width: auto; min-width: 160px; font-weight: 600;" 
+                                    <select class="form-input"
                                         data-action="quickAssign" data-stid="${stIdxArg}" data-pid="${pIdx}" data-sid="${sIdx}" data-tid="${tIdx}">
                                         <option value="Unassigned" ${currentAssignee === "Unassigned" || !currentAssignee ? "selected" : ""}>-- Unassigned --</option>
-                                        ${
-                                          assigneeOptions.includes(
-                                            `value="${currentAssignee}"`,
-                                          )
-                                            ? assigneeOptions.replace(
-                                                `value="${currentAssignee}"`,
-                                                `value="${currentAssignee}" selected`,
-                                              )
-                                            : assigneeOptions +
-                                              `<option value="${currentAssignee}" selected>${currentAssignee}</option>`
-                                        }
+                                        ${assigneeOptions.includes(
+            `value="${currentAssignee}"`,
+          )
+              ? assigneeOptions.replace(
+                `value="${currentAssignee}"`,
+                `value="${currentAssignee}" selected`,
+              )
+              : assigneeOptions +
+              `<option value="${currentAssignee}" selected>${currentAssignee}</option>`
+            }
                                     </select>
                                 </div>
                             </div>
@@ -1417,7 +1419,7 @@ window.openEditModal = function (stIdx, pIdx, sIdx, tIdx) {
       return;
     tc =
       generatedTestCases.strategies[stIdx].plans[pIdx].suites[sIdx].testCases[
-        tIdx
+      tIdx
       ];
     if (editModalElements.stIdx) editModalElements.stIdx.value = stIdx;
   } else {
@@ -1474,7 +1476,7 @@ window.openEditModal = function (stIdx, pIdx, sIdx, tIdx) {
   const sType = Array.isArray(tc.scenarioType)
     ? tc.scenarioType.join(", ")
     : (tc.scenarioType || tc.scenario_type || "Happy Path").toString().trim() ||
-      "Happy Path";
+    "Happy Path";
   if (editModalElements.scenarioType)
     editModalElements.scenarioType.value = sType;
   const sSel = document.getElementById("editTcScenarioTypeSelect");
@@ -1483,7 +1485,7 @@ window.openEditModal = function (stIdx, pIdx, sIdx, tIdx) {
   const eType = Array.isArray(tc.executionType)
     ? tc.executionType.join(", ")
     : (tc.executionType || tc.execution_type || "Manual").toString().trim() ||
-      "Manual";
+    "Manual";
   if (editModalElements.executionType)
     editModalElements.executionType.value = eType;
   const eSel = document.getElementById("editTcExecutionTypeSelect");
@@ -1684,14 +1686,14 @@ function handleSaveTestCaseEdit() {
       const tagsVal = editModalElements.tags.value;
       tc.tags = tagsVal
         ? tagsVal
-            .split(",")
-            .map((t) => t.trim())
-            .filter((t) => {
-              if (!t) return false;
-              if (t.toLowerCase() === "null") return false;
-              if (/^[^a-zA-Z0-9]+$/.test(t)) return false;
-              return true;
-            })
+          .split(",")
+          .map((t) => t.trim())
+          .filter((t) => {
+            if (!t) return false;
+            if (t.toLowerCase() === "null") return false;
+            if (/^[^a-zA-Z0-9]+$/.test(t)) return false;
+            return true;
+          })
         : [];
     }
 
@@ -1769,7 +1771,7 @@ window.handleQuickAssign = function (stIdx, pIdx, sIdx, tIdx, value) {
     if (!generatedTestCases.strategies[stIdx]) return;
     tc =
       generatedTestCases.strategies[stIdx].plans[pIdx].suites[sIdx].testCases[
-        tIdx
+      tIdx
       ];
   } else {
     if (!generatedTestCases.plans[pIdx]) return;
@@ -1809,7 +1811,7 @@ window.handleQuickPriority = function (stIdx, pIdx, sIdx, tIdx, value) {
     if (!generatedTestCases.strategies[stIdx]) return;
     tc =
       generatedTestCases.strategies[stIdx].plans[pIdx].suites[sIdx].testCases[
-        tIdx
+      tIdx
       ];
   } else {
     if (!generatedTestCases.plans[pIdx]) return;
@@ -2974,7 +2976,7 @@ window.handleDeleteEvidence = function (stIdx, pIdx, sIdx, tIdx, evIdx) {
       return;
     tc =
       generatedTestCases.strategies[stIdx].plans[pIdx].suites[sIdx].testCases[
-        tIdx
+      tIdx
       ];
   } else {
     // 3, 4, 5 levels: plans -> suites -> testCases
@@ -3035,7 +3037,7 @@ function savePlanChanges() {
   ) {
     plan =
       generatedTestCases.strategies[currentEditingStrategyIndex].plans[
-        currentEditingPlanIndex
+      currentEditingPlanIndex
       ];
   } else {
     plan = generatedTestCases.plans[currentEditingPlanIndex];
@@ -3117,7 +3119,7 @@ function saveSuiteChanges() {
   } else {
     suite =
       generatedTestCases.plans[currentEditingPlanIndex].suites[
-        currentEditingSuiteIndex
+      currentEditingSuiteIndex
       ];
   }
 
