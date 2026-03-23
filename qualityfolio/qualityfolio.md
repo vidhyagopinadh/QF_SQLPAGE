@@ -398,14 +398,14 @@ FROM counts;
 -- Success Percentage
 WITH counts AS (
   SELECT COUNT(DISTINCT test_case_id) AS total_tests,
-         COUNT(DISTINCT CASE WHEN LOWER(test_case_status) IN ('reopen', 'failed', 'not ok')
-               THEN test_case_id END) AS total_defects
+         COUNT(DISTINCT CASE WHEN LOWER(test_case_status) IN ('passed', 'ok')
+               THEN test_case_id END) AS total_passed
   FROM qf_case_status_tap
   WHERE project_name = :project_name
 )
 SELECT '## Test Success Rate (Percentage)' AS description_md,
        '# ' || CASE WHEN total_tests = 0 THEN '0%'
-                    ELSE ROUND(((total_tests - total_defects) * 100.0) / total_tests,2) || '%' END AS description_md,
+                    ELSE ROUND((total_passed * 100.0) / total_tests, 2) || '%' END AS description_md,
        'white' AS background_color,
         'green' as color,
     'circle-dashed-check'       as icon

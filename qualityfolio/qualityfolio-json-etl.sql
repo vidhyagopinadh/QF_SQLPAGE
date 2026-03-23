@@ -2792,6 +2792,12 @@ select
   ) as failed_cases
 from
   qf_role_with_evidence_refined
+WHERE (
+    NULLIF(cycledate, '') IS NULL
+    OR DATE(
+      SUBSTR(cycledate, 7, 4) || '-' || SUBSTR(cycledate, 1, 2) || '-' || SUBSTR(cycledate, 4, 2)
+    ) <= DATE('now', 'localtime')
+  )
 group by
   cycle,
   project_name;
@@ -3889,17 +3895,20 @@ from
   qf_role_history tbl
 where
   role_name = 'project';
-CREATE TABLE IF NOT EXISTS github_issues (
-    number INTEGER,
-    assignee TEXT,
-    title TEXT,
-    body TEXT,
-    html_url TEXT,
-    author_association TEXT,
-    created_at TEXT,
-    state TEXT,
-    user TEXT
-  );
+-- Drop any accidental table creation from prior scripts
+
+CREATE VIEW IF NOT EXISTS github_issues AS
+  SELECT
+    NULL AS number,
+    NULL AS assignee,
+    NULL AS title,
+    NULL AS body,
+    NULL AS html_url,
+    NULL AS author_association,
+    NULL AS created_at,
+    NULL AS state,
+    NULL AS user
+  WHERE 1=0;
 -- Drop target view first (safe)
   DROP VIEW IF EXISTS qf_issue_detail;
 -- Create only if github_issues exists
@@ -3910,10 +3919,17 @@ FROM
   (
     SELECT
       number AS id,
-      substr(
-        assignee,
-        instr(assignee, '"login":') + 9,
-        instr(assignee, ',') - (instr(assignee, '"login":') + 10)
+      -- Robustly parse the assignee login string (removes structural JSON quotes)
+      COALESCE(
+        json_extract(assignee, '$.login'),
+        REPLACE(
+          substr(
+            assignee,
+            instr(assignee, '"login":"') + 9,
+            instr(substr(assignee, instr(assignee, '"login":"') + 9), '"') - 1
+          ),
+          '"', ''
+        )
       ) AS assignee,
       substr(
         substr(body, instr(body, '**Test Case ID : [') + 18),
@@ -3942,13 +3958,23 @@ FROM
       created_at,
       state,
       'GIT' AS external_source,
-      substr(user, 11, instr(user, '",') - 11) AS owner,
-      substring(
-        substring(html_url, 1, instr(html_url, '/issues') - 1),
-        instr(
-          substring(html_url, 1, instr(html_url, '/issues') -1),
-          assignee
-        ) + length(assignee) + 1
+      -- Cleanly extract the user owner
+      COALESCE(
+        json_extract(user, '$.login'),
+        REPLACE(
+          substr(user, instr(user, '"login":"') + 9, instr(substr(user, instr(user, '"login":"') + 9), '"') - 1),
+          '"', ''
+        )
+      ) AS owner,
+      -- Extract the repo name directly from the URL. Example: https://github.com/owner/repo/issues/...
+      -- This fixes the bug where an issue assigned to someone else breaks the project mapping.
+      REPLACE(
+        substr(
+          html_url,
+          instr(substr(html_url, 20), '/') + 20, 
+          instr(html_url, '/issues') - (instr(substr(html_url, 20), '/') + 20)
+        ),
+        '/', ''
       ) AS project_name
     FROM
       github_issues

@@ -1,6 +1,6 @@
 {
-  "database_url": "sqlite://resource-surveillance.sqlite.db?mode=rwc",
-  "web_root": "./dev-src.auto",
   "allow_exec": true,
-  "port": "9227"
+  "database_url": "sqlite://resource-surveillance.sqlite.db?mode=rwc",
+  "port": "9227",
+  "web_root": "./dev-src.auto"
 }
