@@ -1481,7 +1481,7 @@
         </div>
 
         <div style="display:flex;">
-          <button id="bulkRunBtn" style="background: #169fb9;color: #FFFFFF;border: 1.5px solid #29a454;border-radius: 8px;padding: 7px 15px;font-size: 0.8rem;font-weight: 700;cursor: pointer;display: flex; margin-right:20px">
+          <button id="bulkRunBtn" style="display:none; background: #169fb9;color: #FFFFFF;border: 1.5px solid #29a454;border-radius: 8px;padding: 7px 15px;font-size: 0.8rem;font-weight: 700;cursor: pointer;display: flex; margin-right:20px">
           Run Cycle
           </button>
           <button id="bulkEditBtn" style="background: #169fb9;color: #FFFFFF;border: 1.5px solid #29a454;border-radius: 8px;padding: 7px 15px;font-size: 0.8rem;font-weight: 700;cursor: pointer;display: flex; margin-right:20px">
