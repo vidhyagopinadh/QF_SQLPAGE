@@ -26,7 +26,9 @@ SELECT 'shell' AS component,
             '/css/pikaday.css',
             '/css/treeview.css',
             'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'
-        ) AS css;
+        ) AS css,
+        '/images/favicon.ico' AS favicon,
+        '© 2026 Qualityfolio. Test assurance as living Markdown.' AS footer;
         
 
 SET _members   = (SELECT json_group_array(json_object('name', full_name, 'id', id)) FROM team_members);
@@ -170,7 +172,7 @@ SELECT 'html' AS component, '
         .left-rounded { border-top-right-radius: 0; border-bottom-right-radius: 0; border-right: none; }
         .right-rounded { border-top-left-radius: 0; border-bottom-left-radius: 0; }
         
-        /* Tree View (Hierarchy) Tab Styles */
+        /* Tree View (Hierarchy) Tab Styles — all levels always expanded */
         .tree-node { margin-left: 1.25rem; border-left: 1px solid rgba(226, 232, 240, 0.5); padding-left: 0.75rem; margin-top: 0.3rem; }
         .tree-node.open > .tree-children { display: block; }
         .tree-header { display: flex; align-items: center; justify-content: space-between; padding: 5px 10px; border-radius: 8px; transition: background 0.2s; }
@@ -178,7 +180,7 @@ SELECT 'html' AS component, '
         .tree-actions { display: flex; gap: 0.75rem; opacity: 0.3; transition: opacity 0.2s; }
         .tree-header:hover .tree-actions { opacity: 1; }
         .tree-actions span:hover { text-decoration: underline; color: var(--primary-color); }
-        .tree-children { display: none; }
+        .tree-children { display: block; }
 
         /* Upload Prompt */
         .upload-prompt {
@@ -317,7 +319,7 @@ SELECT 'html' AS component, '
             padding: 7px 10px;
             cursor: pointer;
             border-radius: 8px;
-            color: #169fb9 !important;
+            color: #666 !important;
             font-size: 0.75rem;
             transition: all 0.2s ease;
             white-space: nowrap;
@@ -349,7 +351,7 @@ SELECT 'html' AS component, '
         }
         
         .tree-children {
-            display: none;
+            display: block; /* Always expanded — full hierarchy visible by default */
             padding-left: 12px;
             margin-left: 6px;
             border-left: 2px solid rgba(14, 165, 233, 0.15);
@@ -486,9 +488,9 @@ SELECT 'html' AS component, '
         input::placeholder, textarea::placeholder { color: rgba(148, 163, 184, 0.7); }
 
         .tab-btn.active {
-            color: var(--primary-color) !important;
-            border-bottom-color: var(--primary-color) !important;
-            font-weight: 600;
+            color: #FFF !important;
+            background: oklch(67.66% .1481 238.14) !important;
+            border-radius: 10px 10px 0 0 !important;
         }
         .tab-content { display: none !important; }
         .tab-content.active { display: block !important; }
@@ -568,13 +570,6 @@ SELECT 'html' AS component, '
         }
 
         /* Buttons */
-        .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.25rem; border-radius: 10px; font-size: 0.88rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; border: 1px solid transparent; line-height: 1.2; letter-spacing: -0.3px; }
-        .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.75rem; border-radius: 8px; }
-        .btn-primary { background: linear-gradient(135deg, var(--primary-color) 0%, #0284c7 100%); color: white; border-color: transparent; box-shadow: 0 4px 12px rgba(14, 165, 233, 0.25); }
-        .btn-primary:hover { background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(14, 165, 233, 0.35); }
-        .btn-primary:active { transform: translateY(0); box-shadow: 0 2px 8px rgba(14, 165, 233, 0.25); }
-        .btn-secondary { background: rgba(241, 245, 249, 0.8); color: #475569; border-color: rgba(226, 232, 240, 0.6); transition: all 0.2s ease; }
-        .btn-secondary:hover { background: #e2e8f0; color: #1e293b; border-color: rgba(226, 232, 240, 1); transform: translateY(-1px); }
         .btn-outline { background: transparent; border-color: rgba(226, 232, 240, 0.8); color: #64748b; }
         .btn-outline:hover { background: rgba(248, 250, 252, 0.9); color: var(--primary-color); border-color: var(--primary-color); }
 
@@ -587,7 +582,7 @@ SELECT 'html' AS component, '
         .close-modal { background: none; border: none; font-size: 1.5rem; color: #94a3b8; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; width:36px; height:36px; border-radius:10px; }
         .close-modal:hover { color: #1e293b; background: rgba(226, 232, 240, 0.5); }
 
-        /* Tree View (Hierarchy) Tab Styles */
+        /* Tree View (Hierarchy) Tab Styles — all levels always expanded */
         .tree-node { margin-left: 1.25rem; border-left: 1px solid #e2e8f0; padding-left: 0.75rem; margin-top: 0.25rem; }
         .tree-node.open > .tree-children { display: block; }
         .tree-node .tree-header { display: flex; align-items: center; justify-content: space-between; padding: 4px 8px; border-radius: 6px; transition: background 0.2s; }
@@ -596,7 +591,7 @@ SELECT 'html' AS component, '
         .tree-node .tree-header:hover .tree-actions { opacity: 1; }
         .tree-node .tree-actions span { cursor: pointer; font-size: 0.75rem; color: var(--primary-color); }
         .tree-node .tree-actions span.danger { color: #ef4444; }
-        .tree-node .tree-children { display: none; }
+        .tree-node .tree-children { display: block; }
         .tree-node.open > .tree-children { display: block; }
 
         /* Toast Notification */
@@ -611,7 +606,7 @@ SELECT 'html' AS component, '
         #md-save-toast.error { background: linear-gradient(135deg,#f43f5e,#e11d48); }
         #md-save-toast.info { background: linear-gradient(135deg,#6366f1,#4f46e5); }
         #md-editor-tabs .tab-btn{
-            padding:0.5rem 0rem!important;
+            padding:0.5rem 0.8rem!important;
             border:none!important;
             color: #666!important;
             cursor:pointer;
@@ -626,8 +621,9 @@ SELECT 'html' AS component, '
             font-size: 0.75rem;
         }
         #md-editor-tabs .tab-btn.active{
-            color:#0ea5e9!important; 
-            border-bottom: 3px solid #0ea5e9!important;
+           color: #FFF !important;
+            background: oklch(67.66% .1481 238.14) !important;
+            border-radius: 10px 10px 0 0 !important;
         }
         .tc-list .tc-card {
             background: var(--bg-primary);
@@ -778,14 +774,14 @@ SELECT 'html' AS component, '
                     </h1>
                     <div style="display:flex;align-items:center;gap:1.5rem;">
                         <span id="totalTestCases" class="badge" style="padding: 0.3rem 0.9rem; font-size: 0.8rem;">0 Cases</span>
-                        <button id="btnSaveFileAction" class="btn btn-primary qfg-tc-btn" style="padding:0rem 0.5rem !important;background:linear-gradient(135deg,var(--primary-color),#0284c7); font-weight: 600;">
+                        <button id="btnSaveFileAction" class="btn btn-primary qfg-tc-btn" style="padding:0rem 0.5rem !important; font-weight: 600;">
                             <i class="fas fa-save"></i> Save Changes
                         </button>
                     </div>
                 </div>
 
                 <!-- Tabs Section: Fixed -->
-                <div id="md-editor-tabs" class="tabs" style="display:flex;gap:2rem;padding:0 1rem;background:#fff;align-items:center;flex-wrap:wrap; border-bottom: 2px solid rgba(226, 232, 240, 0.6); flex-shrink: 0;">
+                <div id="md-editor-tabs" class="tabs" style="display:flex;padding:0 1rem;background:#fff;align-items:center;flex-wrap:wrap; border-bottom: 2px solid rgba(226, 232, 240, 0.6); flex-shrink: 0;margin: 1rem 0 0 0;">
                     <button class="tab-btn active" data-tab="preview"><i class="fa fa-eye"></i>Preview</button>
                     <button class="tab-btn" data-tab="treeView"><i class="fa fa-sitemap"></i>Hierarchy</button>
                     <button class="tab-btn" data-tab="markdown"><i class="fa fa-code"></i>Markdown</button>
@@ -813,11 +809,11 @@ SELECT 'html' AS component, '
 
                         <!-- Center-Left: Quick Edit -->
                         <div class="qfg-bulk-group">
-                            <button id="bulkEditBtn" class="btn btn-sm btn-primary">
-                                <i class="fa fa-pencil" aria-hidden="true"></i>
+                            <button id="bulkEditBtn" class="btn btn-sm  btn-edit-action">
+                               <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                             </button>
-                            <button id="bulkDeleteBtn" class="btn btn-sm btn-danger">
-                                <i class="fa fa-trash" aria-hidden="true"></i>
+                            <button id="bulkDeleteBtn" class="btn btn-sm btn-delete-action">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
                             </button>
                         </div>
 

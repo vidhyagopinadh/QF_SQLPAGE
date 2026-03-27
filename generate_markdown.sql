@@ -8,7 +8,7 @@ WHERE NULLIF($project_name, '') IS NULL OR NULLIF($requirement_text, '') IS NULL
 
 -- Shell
 SELECT 'shell' AS component,
-       '' AS title,
+       'Qualityfolio AI' AS title,
        'logo.png' AS image,
        '/' AS link,
        'Rahul Raj' AS user_name,
@@ -25,7 +25,9 @@ SELECT 'shell' AS component,
        json_array(
            '/css/theme.css?v=' || CAST(STRFTIME('%s', 'now') AS TEXT),
            '/css/chat.css?v='  || CAST(STRFTIME('%s', 'now') AS TEXT)
-       ) AS css;
+       ) AS css,
+       '/images/favicon.ico' AS favicon,
+       '© 2026 Qualityfolio. Test assurance as living Markdown.' AS footer;
 
 -- ── Capture params ────────────────────────────────────────────
 SET _schema     = COALESCE(NULLIF($schema_level,''),   '3_level');
